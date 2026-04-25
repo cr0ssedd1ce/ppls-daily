@@ -1,0 +1,9 @@
+# _headers
+/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Headers: Authorization, Content-Type
+  Cache-Control: public, max-age=3600
+
+# Allow PDF files to be loaded from any domain (needed for PDF.js)
+*.pdf
+  Access-Control-Allow-Origin: *
