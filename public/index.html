@@ -4,96 +4,452 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The People's Daily – Your Personal News Service</title>
+
+  <!-- Google Fonts: Masthead special fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Xanh+Mono&family=Jacquard+24&family=Aladin&display=swap" rel="stylesheet" />
+
   <style>
+    /* ====== DARK THEME BASE ====== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Georgia, 'Times New Roman', Times, serif; background: #faf7f2; color: #222; line-height: 1.5; }
-    .paper { max-width: 1100px; margin: 0 auto; padding: 1.2rem 1.5rem; }
-    .masthead { text-align: center; border-top: 2px solid #222; border-bottom: 3px double #222; padding: 0.8rem 0 0.6rem; margin-bottom: 1.8rem; }
-    .masthead h1 { font-size: clamp(2.8rem, 6vw, 4.2rem); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; line-height: 1.1; margin: 0; }
-    .date-line { font-style: italic; color: #444; margin-top: 0.3rem; font-size: 1rem; }
-    .credibility-summary { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 0.5rem; font-size: 0.9rem; flex-wrap: wrap; }
-    .credibility-summary .label { font-weight: bold; color: #444; }
-    .credibility-bar { width: 120px; height: 10px; background: #e0e0e0; border-radius: 5px; overflow: hidden; }
-    .credibility-fill { height: 100%; transition: width 0.5s; background: linear-gradient(90deg, #d32f2f, #fbc02d 50%, #388e3c); }
-    .credibility-value { font-weight: bold; min-width: 3rem; text-align: right; }
-    .main-grid { display: grid; grid-template-columns: 1fr 310px; gap: 2rem; }
-    @media (max-width: 850px) { .main-grid { grid-template-columns: 1fr; } }
+    :root {
+      --bg-page: #1a1a1a;
+      --bg-card: #2a2a2a;
+      --bg-sidebar: #232323;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --border: #444;
+      --accent: #66bb6a;        /* soft green for active tabs & buttons */
+      --hover-bg: #3a3a3a;
+    }
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.5;
+      transition: font-family 0.2s;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* default body sans */
+    }
+    .paper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.2rem 1.5rem;
+    }
+
+    /* ====== MASTHEAD ====== */
+    .masthead {
+      text-align: center;
+      padding-bottom: 0.6rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #555;
+    }
+    .masthead h1 {
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin: 0;
+      color: #ffffff;
+      /* font-family set via JS (separate from body) */
+      font-family: Georgia, 'Times New Roman', serif; /* default masthead serif */
+    }
+    .date-line {
+      font-style: italic;
+      color: #aaa;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+    }
+    .credibility-summary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+      color: #ccc;
+    }
+    .credibility-summary .label { font-weight: bold; color: #ddd; }
+    .credibility-bar {
+      width: 120px;
+      height: 8px;
+      background: #444;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .credibility-fill {
+      height: 100%;
+      transition: width 0.5s;
+      background: linear-gradient(90deg, #d32f2f, #fbc02d 50%, #388e3c);
+    }
+    .credibility-value { font-weight: bold; min-width: 3rem; text-align: right; color: #fff; }
+
+    /* ====== TOP BAR (tabs + settings gear) ====== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.8rem;
+      gap: 1rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      flex: 1;
+    }
+    .tab-btn {
+      padding: 0.5rem 1.2rem;
+      background: #2a2a2a;
+      border: 1px solid #555;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ccc;
+      white-space: nowrap;
+      transition: 0.2s;
+    }
+    .tab-btn:hover { background: #3a3a3a; }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #1a1a1a;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+    .settings-btn {
+      background: none;
+      border: 1px solid #555;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      transition: 0.2s;
+    }
+    .settings-btn:hover { background: #3a3a3a; }
+
+    /* ====== MAIN GRID ====== */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 2rem;
+    }
+    @media (max-width: 850px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .top-bar { flex-wrap: wrap; }
+    }
+
+    /* ====== ARTICLE CARDS ====== */
     .category-section { margin-bottom: 2.4rem; }
-    .category-title { font-size: 1.8rem; font-weight: bold; border-bottom: 2px solid #222; padding-bottom: 0.25rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-    .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-    .article-card { background: white; border: 1px solid #ddd; border-radius: 3px; overflow: hidden; transition: box-shadow 0.2s, transform 0.1s; display: flex; flex-direction: column; }
-    .article-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.12); transform: translateY(-2px); }
-    .article-card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid #e0e0e0; }
-    .article-text { padding: 1rem 1rem 0.8rem; flex: 1; display: flex; flex-direction: column; }
-    .article-text h2 { font-size: 1.15rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.4rem; color: #111; }
-    .excerpt { font-size: 0.9rem; color: #444; flex: 1; margin-bottom: 0.7rem; overflow-wrap: break-word; }
-    .excerpt a { color: #1a0dab; text-decoration: underline; word-break: break-all; }
-    .article-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #777; border-top: 1px solid #eee; padding-top: 0.5rem; flex-wrap: wrap; gap: 0.3rem; }
-    .btn { background: none; border: 1px solid #555; color: #333; padding: 0.25rem 0.7rem; border-radius: 3px; cursor: pointer; font-family: inherit; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.15s; background: #fff; }
-    .btn:hover { background: #333; color: #fff; border-color: #333; }
-    .note-toggle { background: none; border: none; font-size: 0.8rem; cursor: pointer; color: #555; padding: 0 0.2rem; margin-left: auto; }
-    .note-toggle.has-note { color: #1a73e8; font-weight: bold; }
-    .annotation-box { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
-    .annotation-box textarea { width: 100%; border: 1px solid #ccc; border-radius: 3px; padding: 0.4rem; font-family: inherit; font-size: 0.85rem; resize: vertical; }
-    .annotation-box .save-note-btn { align-self: flex-end; padding: 0.2rem 0.8rem; background: #333; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 0.7rem; text-transform: uppercase; }
-    .weather-panel { background: #faf7f2; border: 1px solid #d5cfc4; padding: 1.2rem; border-radius: 3px; height: fit-content; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
-    .weather-panel h3 { font-size: 1.3rem; border-bottom: 1px solid #aaa; padding-bottom: 0.3rem; margin-bottom: 0.8rem; }
+    .category-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-bottom: 2px solid #555;
+      padding-bottom: 0.25rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+    .article-card {
+      background: var(--bg-card);
+      border: 1px solid #444;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.1s;
+      display: flex;
+      flex-direction: column;
+    }
+    .article-card:hover {
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .article-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-bottom: 1px solid #555;
+    }
+    .article-text {
+      padding: 1rem 1rem 0.8rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .article-text h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.4rem;
+      color: #ffffff;
+    }
+    .excerpt {
+      font-size: 0.9rem;
+      color: #bbb;
+      flex: 1;
+      margin-bottom: 0.7rem;
+      overflow-wrap: break-word;
+    }
+    .excerpt a { color: #8ab4f8; text-decoration: underline; }
+    .article-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #aaa;
+      border-top: 1px solid #444;
+      padding-top: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    .btn {
+      background: #333;
+      border: 1px solid #555;
+      color: #ddd;
+      padding: 0.25rem 0.7rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+    }
+    .btn:hover { background: #555; color: #fff; }
+
+    .note-toggle {
+      background: none;
+      border: none;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #aaa;
+      padding: 0 0.2rem;
+      margin-left: auto;
+    }
+    .note-toggle.has-note { color: #8ab4f8; font-weight: bold; }
+    .annotation-box {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .annotation-box textarea {
+      width: 100%;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 0.4rem;
+      background: #1e1e1e;
+      color: #eee;
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+    }
+    .annotation-box .save-note-btn {
+      align-self: flex-end;
+      padding: 0.2rem 0.8rem;
+      background: #555;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    /* ====== WEATHER SIDEBAR ====== */
+    .weather-panel {
+      background: var(--bg-sidebar);
+      border: 1px solid #444;
+      padding: 1.2rem;
+      border-radius: 8px;
+      height: fit-content;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .weather-panel h3 {
+      font-size: 1.2rem;
+      border-bottom: 1px solid #555;
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.8rem;
+      color: #fff;
+    }
     .weather-search { display: flex; gap: 0.3rem; margin-bottom: 0.8rem; }
-    .weather-search input { flex: 1; padding: 0.45rem; border: 1px solid #aaa; border-radius: 3px; font-family: inherit; font-size: 0.85rem; }
-    .weather-search button { padding: 0.45rem 0.9rem; background: #333; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; }
-    .weather-details p { margin-bottom: 0.3rem; font-size: 0.9rem; }
-    .forecast-confidence { margin-top: 1rem; padding-top: 0.6rem; border-top: 1px dashed #ccc; font-size: 0.85rem; }
-    .forecast-confidence .mini-bar { width: 70px; height: 7px; background: #e0e0e0; border-radius: 4px; display: inline-block; margin-left: 0.3rem; overflow: hidden; }
+    .weather-search input {
+      flex: 1;
+      padding: 0.45rem;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background: #2a2a2a;
+      color: #eee;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+    .weather-search button {
+      padding: 0.45rem 0.9rem;
+      background: #555;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .weather-details p { margin-bottom: 0.3rem; font-size: 0.9rem; color: #ccc; }
+    .forecast-confidence { margin-top: 1rem; padding-top: 0.6rem; border-top: 1px dashed #555; font-size: 0.85rem; color: #aaa; }
+    .forecast-confidence .mini-bar {
+      width: 70px;
+      height: 7px;
+      background: #444;
+      border-radius: 4px;
+      display: inline-block;
+      margin-left: 0.3rem;
+      overflow: hidden;
+    }
     .forecast-confidence .mini-fill { height: 100%; display: block; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 1000; }
-    .modal.active { display: flex; }
-    .modal-content { background: #fff; width: 92%; max-width: 1000px; max-height: 90vh; border-radius: 3px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; border-bottom: 1px solid #ddd; }
-    .modal-body { flex: 1; overflow: auto; padding: 1.2rem; }
-    .close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #555; }
-    .loading, .error { text-align: center; padding: 2rem; font-style: italic; }
-    .error { color: #a00; }
-    .article-credibility { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; }
-    .mini-bar { width: 50px; height: 5px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+    .article-credibility { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; color: #aaa; }
+    .mini-bar { width: 50px; height: 5px; background: #444; border-radius: 3px; overflow: hidden; display: inline-block; }
     .mini-fill { height: 100%; }
-    /* Feed manager modal */
-    .feed-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #eee; }
-    .feed-item input, .feed-item select { flex: 1; padding: 0.3rem; border: 1px solid #aaa; border-radius: 3px; font-family: inherit; }
+
+    /* ====== MODALS ====== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: #2a2a2a;
+      width: 92%;
+      max-width: 620px;
+      max-height: 85vh;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      color: #ddd;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid #444;
+      color: #fff;
+    }
+    .modal-body { flex: 1; overflow: auto; padding: 1.5rem; }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    /* ====== SETTINGS MODAL ====== */
+    .settings-section { margin-bottom: 1.8rem; }
+    .settings-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      border-left: 4px solid var(--accent);
+      padding-left: 0.6rem;
+      color: #fff;
+    }
+    .font-option {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border: 1px solid #555;
+      border-radius: 30px;
+      margin: 0.3rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #ccc;
+      background: #333;
+      transition: 0.2s;
+    }
+    .font-option.selected {
+      background: var(--accent);
+      color: #1a1a1a;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .quick-add { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .quick-add input, .quick-add select, .quick-add button {
+      padding: 0.4rem;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background: #333;
+      color: #eee;
+      font-family: inherit;
+    }
+    .quick-add button {
+      background: var(--accent);
+      color: #1a1a1a;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .manage-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #8ab4f8;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .loading, .error { text-align: center; padding: 2rem; font-style: italic; color: #bbb; }
+    .error { color: #e57373; }
+
+    /* feed manager modal */
+    .feed-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #444; }
+    .feed-item input, .feed-item select {
+      flex: 1;
+      padding: 0.3rem;
+      border: 1px solid #555;
+      border-radius: 3px;
+      background: #1e1e1e;
+      color: #eee;
+      font-family: inherit;
+    }
     .feed-item button { background: #c44; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 3px; cursor: pointer; }
-    .settings-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; padding: 0.5rem; background: #e8e0d5; border-radius: 4px; font-size: 0.9rem; }
-    .settings-bar input, .settings-bar select, .settings-bar button { padding: 0.4rem 0.6rem; border: 1px solid #aaa; border-radius: 4px; font-family: inherit; }
-    .settings-bar button { background: #4a6741; color: white; border: none; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="paper">
+    <!-- Masthead -->
     <div class="masthead">
-      <h1>The People's Daily</h1>
+      <h1 id="mastheadTitle">The People's Daily</h1>
       <div class="date-line" id="dateLine"></div>
       <div class="credibility-summary" id="editionCredibility"></div>
     </div>
 
-    <!-- Settings bar -->
-    <div class="settings-bar">
-      <button id="manageFeedsBtn">🛠️ Manage Feeds</button>
-      <span style="flex:1;"></span>
-      <span>Add quick feed:</span>
-      <input type="text" id="feedUrlInput" placeholder="RSS URL" />
-      <select id="categorySelect">
-        <option value="General">General</option>
-        <option value="Technology">Technology</option>
-        <option value="World">World</option>
-        <option value="Science">Science</option>
-        <option value="Culture">Culture</option>
-        <option value="Local">Local</option>
-      </select>
-      <button id="addFeedBtn">Add</button>
+    <!-- Tabs & Settings Gear -->
+    <div class="top-bar">
+      <nav class="tabs" id="tabBar">
+        <!-- dynamically filled -->
+      </nav>
+      <button class="settings-btn" id="settingsBtn" title="Settings">⚙</button>
     </div>
 
+    <!-- Main content -->
     <div class="main-grid">
       <div id="newsContent" class="news-content">
-        <div class="loading">Fetching today's edition…</div>
+        <div class="loading">Assembling today's edition…</div>
       </div>
+
+      <!-- Weather -->
       <aside class="weather-panel">
         <h3>Weather Today</h3>
         <div class="weather-search">
@@ -102,12 +458,12 @@
         </div>
         <div class="weather-details" id="weatherBody"><p>Search for a location.</p></div>
         <div class="forecast-confidence" id="weatherConfidence"></div>
-        <small style="display:block; margin-top:0.8rem; color:#555;">Data: Open‑Meteo (free)</small>
+        <small style="display:block; margin-top:0.8rem; color:#888;">Data: Open‑Meteo (free)</small>
       </aside>
     </div>
   </div>
 
-  <!-- PDF Viewer Modal -->
+  <!-- PDF Modal -->
   <div class="modal" id="pdfModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -115,6 +471,53 @@
         <button class="close-btn" id="closePdfBtn">&times;</button>
       </div>
       <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="close-btn" id="closeSettingsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Masthead Font -->
+        <div class="settings-section">
+          <h3>Masthead Font</h3>
+          <div id="mastheadFontSelector">
+            <span class="font-option" data-font="serif">Serif</span>
+            <span class="font-option" data-font="xanh">Xanh Mono</span>
+            <span class="font-option" data-font="jacquard">Jacquard 24</span>
+            <span class="font-option" data-font="aladin">Aladin</span>
+          </div>
+        </div>
+        <!-- Body Font -->
+        <div class="settings-section">
+          <h3>Body Font</h3>
+          <div id="bodyFontSelector">
+            <span class="font-option" data-font="sans">Sans-serif</span>
+            <span class="font-option" data-font="serif">Serif</span>
+          </div>
+        </div>
+        <!-- Quick Add Feed -->
+        <div class="settings-section">
+          <h3>Quick Add Feed</h3>
+          <div class="quick-add">
+            <input type="text" id="quickFeedUrl" placeholder="RSS URL" />
+            <select id="quickFeedCategory">
+              <option>General</option>
+              <option>World</option>
+              <option>Technology</option>
+              <option>Science</option>
+              <option>Culture</option>
+              <option>Local</option>
+            </select>
+            <button id="quickAddBtn">Add</button>
+          </div>
+          <div class="manage-link" id="openFeedManagerBtn">Manage all feeds →</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -131,13 +534,48 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    // ================= CONFIGURATION – CHANGE THESE =================
+    // ================= CONFIGURATION =================
     const FRESHRSS_API = 'https://your-freshrss-domain.com/FreshRSS/api/greader.php';
     const FRESHRSS_AUTH = 'user@example.com:your-api-password';
     const CLIENT_NAME = 'PeoplesDaily';
     // ================= END CONFIGURATION =================
 
-    // Default feeds to auto‑subscribe on first launch
+    // ================= FONT MANAGEMENT =================
+    const MASTHEAD_FONTS = {
+      serif: 'Georgia, "Times New Roman", serif',
+      xanh: '"Xanh Mono", monospace',
+      jacquard: '"Jacquard 24", serif',
+      aladin: '"Aladin", serif'
+    };
+    const BODY_FONTS = {
+      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      serif: 'Georgia, "Times New Roman", serif'
+    };
+
+    function applyMastheadFont(fontKey) {
+      const masthead = document.getElementById('mastheadTitle');
+      masthead.style.fontFamily = MASTHEAD_FONTS[fontKey] || MASTHEAD_FONTS.serif;
+      localStorage.setItem('mastheadFont', fontKey);
+      // refresh selection highlighting
+      document.querySelectorAll('#mastheadFontSelector .font-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.font === fontKey);
+      });
+    }
+    function applyBodyFont(fontKey) {
+      document.body.style.fontFamily = BODY_FONTS[fontKey] || BODY_FONTS.sans;
+      localStorage.setItem('bodyFont', fontKey);
+      document.querySelectorAll('#bodyFontSelector .font-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.font === fontKey);
+      });
+    }
+    function loadFontPreferences() {
+      const mastFont = localStorage.getItem('mastheadFont') || 'serif';
+      applyMastheadFont(mastFont);
+      const bodyFont = localStorage.getItem('bodyFont') || 'sans';
+      applyBodyFont(bodyFont);
+    }
+
+    // ================= DEFAULT FEEDS (unchanged) =================
     const DEFAULT_FEEDS = [
       { url: 'https://www.apnews.com/rss',                category: 'World',       label: 'AP News' },
       { url: 'https://www.democracynow.org/democracynow.rss', category: 'World',   label: 'Democracy Now' },
@@ -151,81 +589,331 @@
       { url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCto7DqB4pJWVr7bFm75cI7g', category: 'Culture', label: 'HasanAbi YouTube' }
     ];
 
-    // Local feeds list (synced with localStorage and FreshRSS)
-    let feeds = JSON.parse(localStorage.getItem('customFeeds')) || [];
-
-    // ================= EXTERNAL DATASETS =================
+    // ================= EXTERNAL DATA =================
     let allsidesRatings = {};
     fetch('data/allsides_bias_ratings.json')
       .then(res => res.json())
       .then(data => { allsidesRatings = data; })
-      .catch(err => console.warn('AllSides dataset not loaded – using limited fallback:', err));
+      .catch(err => console.warn('AllSides dataset not loaded:', err));
 
-    // ================= CREDIBILITY ENGINE =================
+    // ================= CREDIBILITY ENGINE (unchanged) =================
     const MBFC_SOURCE_MAP = { "apnews.com":85,"reuters.com":90,"bbc.co.uk":80,"bbc.com":80,"nytimes.com":70,"washingtonpost.com":65,"hnrss.org":60,"theguardian.com":75,"cnn.com":55,"foxnews.com":45 };
-    function getMBFCScore(domain) { domain = domain.toLowerCase().replace(/^www\./, ''); return MBFC_SOURCE_MAP[domain] ?? 50; }
-    function getAllSidesScore(domain) { domain = domain.toLowerCase().replace(/^www\./, ''); const e = allsidesRatings[domain]; if(!e) return 50; const m = { 'left':25,'left-center':60,'center':100,'right-center':60,'right':25 }; return m[e.rating]??50; }
-    const ADFONTES_RELIABILITY = { 'apnews.com':90,'reuters.com':92,'bbc.co.uk':85,'bbc.com':85,'npr.org':82,'nytimes.com':70,'washingtonpost.com':72,'foxnews.com':55,'cnn.com':62,'msnbc.com':58,'theguardian.com':78,'wsj.com':80,'huffpost.com':65,'breitbart.com':30,'infowars.com':15 };
-    function getAdFontesScore(domain) { domain = domain.toLowerCase().replace(/^www\./, ''); return ADFONTES_RELIABILITY[domain]??50; }
-    const SENSATIONAL_WORDS = ['shocking','outrage','amazing','unbelievable','devastating','miracle','terrible','horrific','disaster','tragedy','must see','viral','incredible','mind-blowing','explosive','bombshell','exposed','insane','crazy','scandal','cover-up','annihilate','crush'];
-    function analyzeBias(text) { if(!text) return 50; let c=0; const t=text.toLowerCase(); SENSATIONAL_WORDS.forEach(w=>c+=(t.match(new RegExp('\\b'+w+'\\b','g'))||[]).length); c+=(t.match(/!{2,}/g)||[]).length+(t.match(/\b[A-Z]{4,}\b/g)||[]).length; return Math.max(0,Math.min(100,100-c*6)); }
-    function getFreshnessScore(pub) { const h=(Date.now()/1000-pub)/3600; if(h<=24) return 100; return Math.max(50,100-((h-24)/(168-24))*50); }
-    const MATERIALIST_LEXICON = ['class struggle','class conflict','working class','proletariat','bourgeoisie','exploitation','surplus value','means of production','base and superstructure','historical materialism','dialectical','contradiction','material conditions','forces of production','relations of production','labor power','alienation','commodity fetishism','imperialism','hegemony','ideology','false consciousness','class consciousness','revolution','praxis','social formation','mode of production','primitive accumulation','crisis of capitalism','uneven development','historical context','systemic oppression','structural inequality','racial capitalism','feminization of poverty','environmental justice','metabolic rift','dialectics of nature'];
-    function analyzeMaterialistContext(text) { if(!text||text.length<20) return 50; const w=text.toLowerCase().split(/\s+/); let m=0; const l=text.toLowerCase(); MATERIALIST_LEXICON.forEach(p=>m+=(l.match(new RegExp(p,'g'))||[]).length); const d=(m/w.length)*100; return Math.min(100,Math.round(100*(1-Math.exp(-d*2.5)))); }
-    function getIdeologicalCorrection(domain) { domain=domain.toLowerCase().replace(/^www\./,''); const e=allsidesRatings[domain]; if(!e) return 100; const r=e.rating; let rs=100; if(r==='right') rs=0; else if(r==='right-center') rs=50; let ls=100; if(r==='left') ls=80; return Math.round((rs*4+ls*1)/5); }
+    function getMBFCScore(d) { d=d.toLowerCase().replace(/^www\./,''); return MBFC_SOURCE_MAP[d]??50; }
+    function getAllSidesScore(d) { d=d.toLowerCase().replace(/^www\./,''); const e=allsidesRatings[d]; if(!e) return 50; const m={'left':25,'left-center':60,'center':100,'right-center':60,'right':25}; return m[e.rating]??50; }
+    const ADFONTES = { 'apnews.com':90,'reuters.com':92,'bbc.co.uk':85,'bbc.com':85,'npr.org':82,'nytimes.com':70,'washingtonpost.com':72,'foxnews.com':55,'cnn.com':62,'msnbc.com':58,'theguardian.com':78,'wsj.com':80,'huffpost.com':65,'breitbart.com':30,'infowars.com':15 };
+    function getAdFontesScore(d) { d=d.toLowerCase().replace(/^www\./,''); return ADFONTES[d]??50; }
+    const SENSATIONAL = ['shocking','outrage','amazing','unbelievable','devastating','miracle','terrible','horrific','disaster','tragedy','must see','viral','incredible','mind-blowing','explosive','bombshell','exposed','insane','crazy','scandal','cover-up','annihilate','crush'];
+    function analyzeBias(t) { if(!t) return 50; let c=0; const l=t.toLowerCase(); SENSATIONAL.forEach(w=>c+=(l.match(new RegExp('\\b'+w+'\\b','g'))||[]).length); c+=(l.match(/!{2,}/g)||[]).length+(l.match(/\b[A-Z]{4,}\b/g)||[]).length; return Math.max(0,Math.min(100,100-c*6)); }
+    function getFreshnessScore(p) { const h=(Date.now()/1000-p)/3600; if(h<=24) return 100; return Math.max(50,100-((h-24)/(168-24))*50); }
+    const MAT_LEX = ['class struggle','class conflict','working class','proletariat','bourgeoisie','exploitation','surplus value','means of production','base and superstructure','historical materialism','dialectical','contradiction','material conditions','forces of production','relations of production','labor power','alienation','commodity fetishism','imperialism','hegemony','ideology','false consciousness','class consciousness','revolution','praxis','social formation','mode of production','primitive accumulation','crisis of capitalism','uneven development','historical context','systemic oppression','structural inequality','racial capitalism','feminization of poverty','environmental justice','metabolic rift','dialectics of nature'];
+    function analyzeMatContext(t) { if(!t||t.length<20) return 50; const w=t.toLowerCase().split(/\s+/); let m=0; const l=t.toLowerCase(); MAT_LEX.forEach(p=>m+=(l.match(new RegExp(p,'g'))||[]).length); const d=(m/w.length)*100; return Math.min(100,Math.round(100*(1-Math.exp(-d*2.5)))); }
+    function getIdeoCorrection(d) { d=d.toLowerCase().replace(/^www\./,''); const e=allsidesRatings[d]; if(!e) return 100; const r=e.rating; let rs=100; if(r==='right') rs=0; else if(r==='right-center') rs=50; let ls=100; if(r==='left') ls=80; return Math.round((rs*4+ls*1)/5); }
     const W_TRUSTED=['apnews.com','reuters.com','bbc.co.uk','bbc.com','npr.org','pbs.org','propublica.org','economist.com','nature.com','science.org','theguardian.com','wsj.com','washingtonpost.com'];
-    const W_UNRELIABLE=['infowars.com','breitbart.com','dailycaller.com','occupy-democrats.com','theduran.com','pravda.ru'];
-    function getWikipediaModifier(domain) { domain=domain.toLowerCase().replace(/^www\./,''); if(W_TRUSTED.includes(domain)) return 10; if(W_UNRELIABLE.includes(domain)) return -10; return 0; }
-    function computeArticleCredibility(domain,text,pub) { const mbfc=getMBFCScore(domain),allsides=getAllSidesScore(domain),adfontes=getAdFontesScore(domain); const bias=analyzeBias(text),fresh=getFreshnessScore(pub),depth=analyzeMaterialistContext(text); const ideo=getIdeologicalCorrection(domain),wiki=getWikipediaModifier(domain); let s=(mbfc*0.2375)+(allsides*0.2375)+(adfontes*0.2375)+(bias*0.095)+(fresh*0.0475)+(depth*0.095)+(ideo*0.05); s=Math.max(0,Math.min(100,s+wiki)); return Math.round(s); }
+    const W_UNTRUST=['infowars.com','breitbart.com','dailycaller.com','occupy-democrats.com','theduran.com','pravda.ru'];
+    function getWikiMod(d) { d=d.toLowerCase().replace(/^www\./,''); if(W_TRUSTED.includes(d)) return 10; if(W_UNTRUST.includes(d)) return -10; return 0; }
+    function computeCredibility(domain,text,pub) {
+      const m=getMBFCScore(domain), a=getAllSidesScore(domain), ad=getAdFontesScore(domain);
+      const bi=analyzeBias(text), fr=getFreshnessScore(pub), de=analyzeMatContext(text);
+      const id=getIdeoCorrection(domain), wk=getWikiMod(domain);
+      let s = (m*0.2375)+(a*0.2375)+(ad*0.2375)+(bi*0.095)+(fr*0.0475)+(de*0.095)+(id*0.05);
+      return Math.round(Math.max(0, Math.min(100, s+wk)));
+    }
 
-    function sanitizeHTML(html) { const div=document.createElement('div'); div.innerHTML=html; const ok=['A','B','I','EM','STRONG','BR','P','UL','LI','OL']; const cleanse=n=>{ if(n.nodeType===3) return; if(n.nodeType===1){ if(!ok.includes(n.tagName)){while(n.firstChild)n.parentNode.insertBefore(n.firstChild,n);n.parentNode.removeChild(n);} else{ const a=n.attributes; for(let i=a.length-1;i>=0;i--){ if(a[i].name!=='href') n.removeAttribute(a[i].name); } Array.from(n.childNodes).forEach(cleanse); } } }; Array.from(div.childNodes).forEach(cleanse); return div.innerHTML; }
-    function getAnnotationKey(url){ return 'note_'+(url||'unknown'); }
-    function getSavedNote(url){ try{return localStorage.getItem(getAnnotationKey(url))||'';}catch(e){return'';} }
-    function saveNote(url,text){ try{localStorage.setItem(getAnnotationKey(url),text);}catch(e){} }
+    function sanitizeHTML(html) { const d=document.createElement('div'); d.innerHTML=html; const ok=['A','B','I','EM','STRONG','BR','P','UL','LI','OL']; const clean=n=>{ if(n.nodeType===3) return; if(n.nodeType===1){ if(!ok.includes(n.tagName)) {while(n.firstChild)n.parentNode.insertBefore(n.firstChild,n); n.parentNode.removeChild(n);} else{ const a=n.attributes; for(let i=a.length-1;i>=0;i--) if(a[i].name!=='href') n.removeAttribute(a[i].name); Array.from(n.childNodes).forEach(clean); } } }; Array.from(d.childNodes).forEach(clean); return d.innerHTML; }
+    function getNoteKey(u) { return 'note_'+(u||'unknown'); }
+    function getSavedNote(u) { try{ return localStorage.getItem(getNoteKey(u))||''; }catch(e){return'';} }
+    function saveNote(u,t) { try{ localStorage.setItem(getNoteKey(u),t); }catch(e){} }
 
-    // ================= WEATHER =================
-    let weatherLat=null,weatherLon=null;
-    document.addEventListener('DOMContentLoaded',()=>{
+    // ================= WEATHER (unchanged) =================
+    let weatherLat=null, weatherLon=null;
+    document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('dateLine').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-      ensureDefaultFeeds().then(()=>loadFreshRSSFeeds());
-      document.getElementById('searchWeatherBtn').addEventListener('click',searchWeather);
-      document.getElementById('locationInput').addEventListener('keypress',e=>{if(e.key==='Enter')searchWeather();});
-      document.getElementById('manageFeedsBtn').addEventListener('click',openFeedManager);
-      document.getElementById('addFeedBtn').addEventListener('click',addQuickFeed);
-      document.getElementById('closeFeedModalBtn').addEventListener('click',()=>document.getElementById('feedModal').classList.remove('active'));
-      if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(p=>{weatherLat=p.coords.latitude.toFixed(4);weatherLon=p.coords.longitude.toFixed(4);fetchWeatherData();},()=>{}); }
-      document.getElementById('closePdfBtn').addEventListener('click',()=>document.getElementById('pdfModal').classList.remove('active'));
-      window.addEventListener('click',e=>{if(e.target.classList.contains('modal'))e.target.classList.remove('active');});
+      loadFontPreferences();
+      ensureDefaultFeeds().then(() => loadFreshRSSFeeds());
+      document.getElementById('searchWeatherBtn').addEventListener('click', searchWeather);
+      document.getElementById('locationInput').addEventListener('keypress', e => { if(e.key==='Enter') searchWeather(); });
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          p => { weatherLat=p.coords.latitude.toFixed(4); weatherLon=p.coords.longitude.toFixed(4); fetchWeatherData(); },
+          ()=>{}
+        );
+      }
+      // Settings modal events
+      document.getElementById('settingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.add('active'));
+      document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.remove('active'));
+      document.getElementById('mastheadFontSelector').addEventListener('click', e => {
+        if (e.target.classList.contains('font-option')) applyMastheadFont(e.target.dataset.font);
+      });
+      document.getElementById('bodyFontSelector').addEventListener('click', e => {
+        if (e.target.classList.contains('font-option')) applyBodyFont(e.target.dataset.font);
+      });
+      document.getElementById('quickAddBtn').addEventListener('click', () => {
+        const url = document.getElementById('quickFeedUrl').value.trim();
+        const cat = document.getElementById('quickFeedCategory').value;
+        if (!url) return;
+        let feeds = JSON.parse(localStorage.getItem('customFeeds')||'[]');
+        if (feeds.some(f=>f.url===url)) { alert('Feed already exists'); return; }
+        feeds.push({url, category:cat});
+        localStorage.setItem('customFeeds',JSON.stringify(feeds));
+        document.getElementById('quickFeedUrl').value = '';
+        loadFreshRSSFeeds();
+      });
+      document.getElementById('openFeedManagerBtn').addEventListener('click', () => {
+        document.getElementById('settingsModal').classList.remove('active');
+        openFeedManager();
+      });
+      window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.classList.remove('active'); });
+      document.getElementById('closePdfBtn').addEventListener('click', ()=> document.getElementById('pdfModal').classList.remove('active'));
+      document.getElementById('closeFeedModalBtn').addEventListener('click', ()=> document.getElementById('feedModal').classList.remove('active'));
     });
 
-    async function searchWeather(){ const q=document.getElementById('locationInput').value.trim(); if(!q) return; document.getElementById('weatherBody').innerHTML='<p>Searching…</p>'; try{ const g=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&format=json`); const d=await g.json(); if(!d.results?.length){ document.getElementById('weatherBody').innerHTML='<p>Not found.</p>';return; } const l=d.results[0]; weatherLat=l.latitude.toFixed(4); weatherLon=l.longitude.toFixed(4); document.getElementById('locationInput').value=`${l.name}, ${l.admin1||''}, ${l.country}`; fetchWeatherData(); }catch(e){ document.getElementById('weatherBody').innerHTML='<p>Error.</p>'; } }
-    async function fetchWeatherData(){ if(!weatherLat||!weatherLon) return; const body=document.getElementById('weatherBody'); body.innerHTML='<p>Loading…</p>'; try{ const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${weatherLat}&longitude=${weatherLon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`); const data=await res.json(); const c=data.current_weather,d=data.daily,desc=getWeatherDesc(c.weathercode); body.innerHTML=`<p><strong>${desc}</strong></p><p>🌡️ ${c.temperature}°C &nbsp; 💨 ${c.windspeed} km/h</p><hr style="margin:0.6rem 0;border-top:1px solid #ccc;"><p><strong>Today:</strong> ↑${d.temperature_2m_max[0]}°C ↓${d.temperature_2m_min[0]}°C</p><p><strong>Tomorrow:</strong> ↑${d.temperature_2m_max[1]}°C ↓${d.temperature_2m_min[1]}°C</p>`; const tA=getWeatherAccuracy(0),mA=getWeatherAccuracy(1); document.getElementById('weatherConfidence').innerHTML=`<div>Forecast Confidence:</div><div style="display:flex;align-items:center;gap:0.3rem;"><span>Today ${tA}%</span><div class="mini-bar"><div class="mini-fill" style="width:${tA}%;background:#388e3c;"></div></div></div><div style="display:flex;align-items:center;gap:0.3rem;margin-top:0.2rem;"><span>Tomorrow ${mA}%</span><div class="mini-bar"><div class="mini-fill" style="width:${mA}%;background:#fbc02d;"></div></div></div>`; document.getElementById('weatherConfidence').dataset.accuracy=Math.round((tA+mA)/2); updateEditionCredibility(); }catch(e){ body.innerHTML='<p>Failed.</p>'; } }
+    async function searchWeather() { /* unchanged */
+      const q=document.getElementById('locationInput').value.trim(); if(!q)return;
+      document.getElementById('weatherBody').innerHTML='<p>Searching…</p>';
+      try {
+        const g=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&format=json`);
+        const d=await g.json(); if(!d.results?.length){ document.getElementById('weatherBody').innerHTML='<p>Not found.</p>';return; }
+        const l=d.results[0]; weatherLat=l.latitude.toFixed(4); weatherLon=l.longitude.toFixed(4);
+        document.getElementById('locationInput').value=`${l.name}, ${l.admin1||''}, ${l.country}`;
+        fetchWeatherData();
+      } catch(e){ document.getElementById('weatherBody').innerHTML='<p>Error.</p>'; }
+    }
+    async function fetchWeatherData() { /* unchanged */
+      if(!weatherLat||!weatherLon)return; const body=document.getElementById('weatherBody'); body.innerHTML='<p>Loading…</p>';
+      try {
+        const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${weatherLat}&longitude=${weatherLon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+        const data=await res.json(); const c=data.current_weather, d=data.daily;
+        const desc=getWeatherDesc(c.weathercode);
+        body.innerHTML=`<p><strong>${desc}</strong></p><p>🌡️ ${c.temperature}°C &nbsp; 💨 ${c.windspeed} km/h</p>
+          <hr style="margin:0.6rem 0;border-top:1px solid #444;">
+          <p><strong>Today:</strong> ↑${d.temperature_2m_max[0]}°C ↓${d.temperature_2m_min[0]}°C</p>
+          <p><strong>Tomorrow:</strong> ↑${d.temperature_2m_max[1]}°C ↓${d.temperature_2m_min[1]}°C</p>`;
+        const tA=getWeatherAccuracy(0), mA=getWeatherAccuracy(1);
+        document.getElementById('weatherConfidence').innerHTML=`
+          <div>Forecast Confidence:</div>
+          <div style="display:flex;align-items:center;gap:0.3rem;"><span>Today ${tA}%</span><div class="mini-bar"><div class="mini-fill" style="width:${tA}%;background:#388e3c;"></div></div></div>
+          <div style="display:flex;align-items:center;gap:0.3rem;margin-top:0.2rem;"><span>Tomorrow ${mA}%</span><div class="mini-bar"><div class="mini-fill" style="width:${mA}%;background:#fbc02d;"></div></div></div>`;
+        document.getElementById('weatherConfidence').dataset.accuracy=Math.round((tA+mA)/2);
+        updateEditionCredibility();
+      } catch(e){ body.innerHTML='<p>Failed.</p>'; }
+    }
     function getWeatherDesc(code){ const m={0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Fog',51:'Light drizzle',53:'Moderate drizzle',55:'Dense drizzle',61:'Slight rain',63:'Moderate rain',65:'Heavy rain',71:'Slight snow',73:'Moderate snow',75:'Heavy snow',95:'Thunderstorm'}; return m[code]||'Unknown'; }
     function getWeatherAccuracy(i){ const a=[95,90,82,76,72,65,63]; return a[Math.min(i,a.length-1)]; }
 
-    // ================= FRESHRSS AUTO‑SUBSCRIBE =================
-    async function ensureDefaultFeeds(){ try{ const sub=await makeFreshRSSRequest('subscription/list',{output:'json'}); const existing=(sub.subscriptions||[]).map(s=>s.id.replace('feed/','')); for(const f of DEFAULT_FEEDS){ if(!existing.includes(f.url)){ await makeFreshRSSRequest('subscription/edit',{ac:'subscribe',s:`feed/${f.url}`,t:f.category,client:CLIENT_NAME}); console.log('Subscribed to',f.label); } } }catch(e){ console.warn('Auto‑subscribe failed:',e); } }
+    // ================= FRESHRSS =================
+    async function ensureDefaultFeeds(){ try{
+      const sub=await makeFreshRSSRequest('subscription/list',{output:'json'});
+      const existing=(sub.subscriptions||[]).map(s=>s.id.replace('feed/',''));
+      for(const f of DEFAULT_FEEDS){
+        if(!existing.includes(f.url)){
+          await makeFreshRSSRequest('subscription/edit',{ac:'subscribe',s:`feed/${f.url}`,t:f.category,client:CLIENT_NAME});
+          console.log('Subscribed to',f.label);
+        }
+      }
+    }catch(e){ console.warn('Auto‑subscribe failed:',e); } }
 
     async function makeFreshRSSRequest(endpoint,params={}){ const u=new URL(FRESHRSS_API+'/'+endpoint); Object.entries(params).forEach(([k,v])=>u.searchParams.append(k,v)); const h=new Headers(); h.append('Authorization','Basic '+btoa(FRESHRSS_AUTH)); const r=await fetch(u.toString(),{headers:h}); if(!r.ok) throw new Error(`FreshRSS error ${r.status}`); return await r.json(); }
 
-    // ================= FEED MANAGEMENT (UI) =================
-    function openFeedManager(){ loadFeedsFromStorage(); const body=document.getElementById('feedModalBody'); body.innerHTML=''; let html=''; feeds.forEach((f,i)=>{ html+=`<div class="feed-item"><span>${f.category}</span><input type="text" value="${f.url}" data-index="${i}" class="feed-url-edit"><select class="feed-cat-edit" data-index="${i}">${['General','Technology','World','Science','Culture','Local'].map(c=>`<option value="${c}" ${f.category===c?'selected':''}>${c}</option>`).join('')}</select><button class="delete-feed-btn" data-index="${i}">✕</button></div>`; }); html+='<button id="addEmptyFeedBtn" style="margin-top:0.5rem;">+ Add New Feed</button>'; body.innerHTML=html; document.querySelectorAll('.feed-url-edit').forEach(inp=>inp.addEventListener('change',e=>{ feeds[e.target.dataset.index].url=e.target.value; saveFeeds(); })); document.querySelectorAll('.feed-cat-edit').forEach(sel=>sel.addEventListener('change',e=>{ feeds[e.target.dataset.index].category=e.target.value; saveFeeds(); })); document.querySelectorAll('.delete-feed-btn').forEach(btn=>btn.addEventListener('click',e=>{ feeds.splice(e.target.dataset.index,1); saveFeeds(); openFeedManager(); })); document.getElementById('addEmptyFeedBtn')?.addEventListener('click',()=>{ feeds.push({url:'',category:'General'}); saveFeeds(); openFeedManager(); }); document.getElementById('feedModal').classList.add('active'); }
+    function openFeedManager(){
+      let feeds = JSON.parse(localStorage.getItem('customFeeds')||'[]');
+      const body=document.getElementById('feedModalBody');
+      let html='';
+      feeds.forEach((f,i)=>{
+        html+=`<div class="feed-item"><span>${f.category}</span><input type="text" value="${f.url}" data-index="${i}" class="feed-url-edit" /><select class="feed-cat-edit" data-index="${i}">${['General','World','Technology','Science','Culture','Local'].map(c=>`<option value="${c}" ${f.category===c?'selected':''}>${c}</option>`).join('')}</select><button class="delete-feed-btn" data-index="${i}">✕</button></div>`;
+      });
+      html+='<button id="addEmptyFeedBtn" style="margin-top:0.5rem;">+ Add New Feed</button>';
+      body.innerHTML=html;
+      document.querySelectorAll('.feed-url-edit').forEach(inp=>inp.addEventListener('change',function(){ feeds[this.dataset.index].url=this.value; saveCustomFeeds(feeds); }));
+      document.querySelectorAll('.feed-cat-edit').forEach(sel=>sel.addEventListener('change',function(){ feeds[this.dataset.index].category=this.value; saveCustomFeeds(feeds); }));
+      document.querySelectorAll('.delete-feed-btn').forEach(btn=>btn.addEventListener('click',function(){ feeds.splice(this.dataset.index,1); saveCustomFeeds(feeds); openFeedManager(); }));
+      document.getElementById('addEmptyFeedBtn')?.addEventListener('click',()=>{ feeds.push({url:'',category:'General'}); saveCustomFeeds(feeds); openFeedManager(); });
+      document.getElementById('feedModal').classList.add('active');
+    }
+    function saveCustomFeeds(feeds) {
+      localStorage.setItem('customFeeds', JSON.stringify(feeds));
+      loadFreshRSSFeeds();
+    }
 
-    function addQuickFeed(){ const url=document.getElementById('feedUrlInput').value.trim(),cat=document.getElementById('categorySelect').value; if(!url) return; if(feeds.some(f=>f.url===url)){alert('Feed already exists');return;} feeds.push({url,category:cat}); saveFeeds(); document.getElementById('feedUrlInput').value=''; loadFreshRSSFeeds(); }
+    // ================= LOAD & RENDER (with Tabs) =================
+    let allSections = [];
+    async function loadFreshRSSFeeds() {
+      const nc = document.getElementById('newsContent');
+      nc.innerHTML = '<div class="loading">Loading categories…</div>';
+      try {
+        const tagList = await makeFreshRSSRequest('tag/list');
+        const categories = {};
+        tagList.tags.forEach(tag => {
+          if (tag.id.startsWith('user/-/label/') && tag.type === 'tag') {
+            const name = tag.id.replace('user/-/label/', '');
+            categories[name] = { id: tag.id, name };
+          }
+        });
+        const defaultCats = ['World', 'Technology', 'Science', 'Culture', 'Local', 'General'];
+        defaultCats.forEach(c => { if (!categories[c]) categories[c] = { id: `user/-/label/${c}`, name: c }; });
+        const sorted = [];
+        defaultCats.forEach(c => sorted.push(categories[c]));
+        for (const k of Object.keys(categories)) {
+          if (!defaultCats.includes(k)) sorted.push(categories[k]);
+        }
+        nc.innerHTML = '';
+        allSections = [];
+        let allCreds = [];
+        for (const cat of sorted) {
+          const sec = document.createElement('div');
+          sec.className = 'category-section';
+          sec.dataset.category = cat.name;
+          sec.innerHTML = `<h2 class="category-title">${cat.name}</h2><div class="articles-grid" id="cat-${cat.name}"></div>`;
+          nc.appendChild(sec);
+          const stream = await makeFreshRSSRequest('stream/contents/' + encodeURIComponent(cat.id), { n: 15, r: 'o', c: 'json' });
+          const grid = document.getElementById(`cat-${cat.name}`);
+          if (stream.items && stream.items.length > 0) {
+            const creds = renderArticles(grid, stream.items);
+            allCreds = allCreds.concat(creds);
+          } else {
+            grid.innerHTML = '<p style="color:#888;font-style:italic;">No articles in this section.</p>';
+          }
+          allSections.push({ name: cat.name, element: sec });
+        }
+        buildTabs(allSections.map(s => s.name));
+        switchTab('All');
+        updateEditionCredibility(allCreds);
+      } catch (err) {
+        nc.innerHTML = `<div class="error">Failed to load news. ${err.message}</div>`;
+      }
+    }
 
-    function loadFeedsFromStorage(){ feeds = JSON.parse(localStorage.getItem('customFeeds')) || []; }
-    function saveFeeds(){ localStorage.setItem('customFeeds',JSON.stringify(feeds)); loadFreshRSSFeeds(); }
+    function buildTabs(categoryNames) {
+      const tabBar = document.getElementById('tabBar');
+      tabBar.innerHTML = '';
+      const allBtn = document.createElement('button');
+      allBtn.className = 'tab-btn active';
+      allBtn.textContent = 'All';
+      allBtn.dataset.tab = 'All';
+      allBtn.addEventListener('click', () => switchTab('All'));
+      tabBar.appendChild(allBtn);
+      categoryNames.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.textContent = name;
+        btn.dataset.tab = name;
+        btn.addEventListener('click', () => switchTab(name));
+        tabBar.appendChild(btn);
+      });
+    }
 
-    // ================= LOAD & RENDER =================
-    async function loadFreshRSSFeeds(){ const nc=document.getElementById('newsContent'); nc.innerHTML='<div class="loading">Loading categories…</div>'; try{ const tags=await makeFreshRSSRequest('tag/list'); const cats={}; tags.tags.forEach(t=>{ if(t.id.startsWith('user/-/label/')&&t.type==='tag'){ const n=t.id.replace('user/-/label/',''); cats[n]={id:t.id,name:n}; } }); const order=['World','Technology','Science','Culture','Local','General']; const sorted=[]; order.forEach(o=>{if(cats[o])sorted.push(cats[o]);}); Object.keys(cats).forEach(k=>{if(!order.includes(k))sorted.push(cats[k]);}); nc.innerHTML=''; let allCreds=[]; for(const cat of sorted){ const sec=document.createElement('div'); sec.className='category-section'; sec.innerHTML=`<h2 class="category-title">${cat.name}</h2><div class="articles-grid" id="cat-${cat.name}"></div>`; nc.appendChild(sec); const s=await makeFreshRSSRequest('stream/contents/'+encodeURIComponent(cat.id),{n:15,r:'o',c:'json'}); const grid=document.getElementById(`cat-${cat.name}`); if(s.items?.length){ const creds=renderArticles(grid,s.items); allCreds=allCreds.concat(creds); }else{ grid.innerHTML='<p style="color:#666;font-style:italic;">No articles.</p>'; } } updateEditionCredibility(allCreds); }catch(e){ nc.innerHTML=`<div class="error">Failed to load news. ${e.message}</div>`; } }
+    function switchTab(category) {
+      document.querySelectorAll('.category-section').forEach(sec => {
+        sec.style.display = (category === 'All' || sec.dataset.category === category) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === category);
+      });
+    }
 
-    function extractDomain(url){ try{ const a=new URL(url); return a.hostname.replace(/^www\./,''); }catch(_){return'';} }
+    function extractDomain(url) { try { const a=new URL(url); return a.hostname.replace(/^www\./,''); } catch(_) { return ''; } }
+    function renderArticles(container, items) {
+      const creds = [];
+      items.forEach(item => {
+        const card = document.createElement('div'); card.className = 'article-card';
+        let imgSrc = null;
+        if (item.enclosure?.[0]?.href) imgSrc = item.enclosure[0].href;
+        else if (item.visual?.url) imgSrc = item.visual.url;
+        else {
+          const m = (item.summary?.content||'').match(/<img[^>]+src="([^"]+)"/);
+          if (m) imgSrc = m[1];
+        }
+        if (imgSrc) {
+          const img = document.createElement('img'); img.src = imgSrc; img.onerror = () => img.style.display='none'; card.appendChild(img);
+        }
+        const td = document.createElement('div'); td.className = 'article-text';
+        const h2 = document.createElement('h2'); h2.textContent = item.title||'Untitled'; td.appendChild(h2);
+        const ex = document.createElement('div'); ex.className = 'excerpt';
+        ex.innerHTML = sanitizeHTML((item.summary?.content||'').substring(0,600)); td.appendChild(ex);
 
-    function renderArticles(container,items){ const creds=[]; items.forEach(item=>{ const card=document.createElement('div');card.className='article-card'; let img=null; if(item.enclosure?.[0]?.href)img=item.enclosure[0].href; else if(item.visual?.url)img=item.visual.url; else{ const m=(item.summary?.content||'').match(/<img[^>]+src="([^"]+)"/); if(m)img=m[1]; } if(img){ const i=document.createElement('img');i.src=img;i.onerror=()=>i.style.display='none';card.appendChild(i); } const td=document.createElement('div');td.className='article-text'; const h2=document.createElement('h2');h2.textContent=item.title||'Untitled';td.appendChild(h2); const ex=document.createElement('div');ex.className='excerpt'; ex.innerHTML=sanitizeHTML((item.summary?.content||'').substring(0,600));td.appendChild(ex); const meta=document.createElement('div');meta.className='article-meta'; const ds=document.createElement('span');ds.textContent=new Date((item.published||0)*1000).toLocaleDateString();meta.appendChild(ds); const domain=extractDomain(item.canonical?.[0]?.href||item.alternate?.[0]?.href||''); const ft=((item.title||'')+' '+(item.summary?.content||'')).substring(0,500); const cred=computeArticleCredibility(domain,ft,item.published||0);creds.push(cred); const cd=document.createElement('div');cd.className='article-credibility'; cd.innerHTML=`Acc: ${cred}% <div class="mini-bar"><div class="mini-fill" style="width:${cred}%;background:${cred>70?'#388e3c':cred>40?'#fbc02d':'#d32f2f'};"></div></div>`;meta.appendChild(cd); const link=item.canonical?.[0]?.href||item.alternate?.[0]?.href||'#'; if(link.toLowerCase().endsWith('.pdf')){ const b=document.createElement('button');b.className='btn';b.textContent='📄 PDF';b.onclick=e=>{e.stopPropagation();openPDF(link,item.title);};meta.appendChild(b); }else{ const rb=document.createElement('button');rb.className='btn';rb.textContent='READ';rb.onclick=()=>window.open(link,'_blank');meta.appendChild(rb); } const sb=document.createElement('button');sb.className='btn';sb.textContent='🔊'; sb.onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(item.title+'. '+ex.textContent));};meta.appendChild(sb); const nb=document.createElement('button');nb.className='note-toggle'; const sn=getSavedNote(link);nb.innerHTML=sn?'✎<span style="font-size:0.7rem;">✓</span>':'✎ Note'; nb.classList.toggle('has-note',!!sn); const ac=document.createElement('div');ac.className='annotation-box';ac.style.display='none'; const ta=document.createElement('textarea');ta.rows=2;ta.value=sn; const sbtn=document.createElement('button');sbtn.className='save-note-btn';sbtn.textContent='Save Note'; sbtn.onclick=()=>{saveNote(link,ta.value);nb.innerHTML=ta.value.trim()?'✎<span style="font-size:0.7rem;">✓</span>':'✎ Note';nb.classList.toggle('has-note',!!ta.value.trim());}; ac.appendChild(ta);ac.appendChild(sbtn); nb.addEventListener('click',e=>{e.stopPropagation();ac.style.display=ac.style.display==='none'?'flex':'none';}); meta.appendChild(nb);td.appendChild(meta);td.appendChild(ac); card.appendChild(td);container.appendChild(card); }); return creds; }
+        const meta = document.createElement('div'); meta.className = 'article-meta';
+        const ds = document.createElement('span'); ds.textContent = new Date((item.published||0)*1000).toLocaleDateString(); meta.appendChild(ds);
 
-    function updateEditionCredibility(articleCreds){ const wa=document.getElementById('weatherConfidence')?.dataset?.accuracy; const avg=articleCreds?.length?articleCreds.reduce((a,b)=>a+b,0)/articleCreds.length:50; let overall=avg; if(wa)overall=(avg*0.7+parseInt(wa)*0.3); const el=document.getElementById('editionCredibility'); if(el){ el.innerHTML=`<span class="label">Today's Edition Reliability:</span><div class="credibility-bar"><div class="credibility-fill" style="width:${overall.toFixed(0)}%;"></div></div><span class="credibility-value">${overall.toFixed(0)}%</span>`; } }
+        const domain = extractDomain(item.canonical?.[0]?.href || item.alternate?.[0]?.href || '');
+        const fullText = ((item.title||'') + ' ' + (item.summary?.content||'')).substring(0,500);
+        const cred = computeCredibility(domain, fullText, item.published||0);
+        creds.push(cred);
+        const cd = document.createElement('div'); cd.className = 'article-credibility';
+        cd.innerHTML = `Acc: ${cred}% <div class="mini-bar"><div class="mini-fill" style="width:${cred}%;background:${cred>70?'#388e3c':cred>40?'#fbc02d':'#d32f2f'};"></div></div>`; meta.appendChild(cd);
 
-    async function openPDF(url,title){ const modal=document.getElementById('pdfModal');document.getElementById('modalTitle').textContent=title;const body=document.getElementById('modalBody');body.innerHTML='Loading PDF…';modal.classList.add('active'); try{ const pdf=await pdfjsLib.getDocument(url).promise;let p=1; body.innerHTML=`<div style="margin-bottom:0.8rem;"><button id="prevPage" class="btn">◀ Prev</button><span style="margin:0 1rem;">Page <span id="currentPage">1</span> / ${pdf.numPages}</span><button id="nextPage" class="btn">Next ▶</button><a href="${url}" download style="margin-left:auto;">⬇ Download</a></div><canvas id="pdfCanvas"></canvas>`; const c=document.getElementById('pdfCanvas'),ctx=c.getContext('2d'); async function r(n){ const page=await pdf.getPage(n); const vp=page.getViewport({scale:1.5}); c.width=vp.width;c.height=vp.height; await page.render({canvasContext:ctx,viewport:vp}).promise; document.getElementById('currentPage').textContent=n; } r(1); document.getElementById('prevPage').onclick=()=>{if(p>1)r(--p);}; document.getElementById('nextPage').onclick=()=>{if(p<pdf.numPages)r(++p);}; }catch(e){ body.innerHTML=`<p>PDF load failed. <a href="${url}" target="_blank">Open directly</a></p>`; } }
+        const link = item.canonical?.[0]?.href || item.alternate?.[0]?.href || '#';
+        if (link.toLowerCase().endsWith('.pdf')) {
+          const b = document.createElement('button'); b.className='btn'; b.textContent='📄 PDF';
+          b.onclick = e => { e.stopPropagation(); openPDF(link, item.title); };
+          meta.appendChild(b);
+        } else {
+          const rb = document.createElement('button'); rb.className='btn'; rb.textContent='READ';
+          rb.onclick = () => window.open(link, '_blank');
+          meta.appendChild(rb);
+        }
+        const sb = document.createElement('button'); sb.className='btn'; sb.textContent='🔊';
+        sb.onclick = () => { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(item.title+'. '+ex.textContent)); };
+        meta.appendChild(sb);
+
+        const nb = document.createElement('button'); nb.className = 'note-toggle';
+        const sn = getSavedNote(link);
+        nb.innerHTML = sn ? '✎<span style="font-size:0.7rem;">✓</span>' : '✎ Note';
+        nb.classList.toggle('has-note', !!sn);
+        const ac = document.createElement('div'); ac.className = 'annotation-box'; ac.style.display='none';
+        const ta = document.createElement('textarea'); ta.rows=2; ta.value=sn;
+        const sbtn = document.createElement('button'); sbtn.className='save-note-btn'; sbtn.textContent='Save Note';
+        sbtn.onclick = () => {
+          saveNote(link, ta.value);
+          nb.innerHTML = ta.value.trim() ? '✎<span style="font-size:0.7rem;">✓</span>' : '✎ Note';
+          nb.classList.toggle('has-note', !!ta.value.trim());
+        };
+        ac.appendChild(ta); ac.appendChild(sbtn);
+        nb.addEventListener('click', e => {
+          e.stopPropagation();
+          ac.style.display = ac.style.display==='none' ? 'flex' : 'none';
+        });
+        meta.appendChild(nb);
+        td.appendChild(meta);
+        td.appendChild(ac);
+        card.appendChild(td);
+        container.appendChild(card);
+      });
+      return creds;
+    }
+
+    function updateEditionCredibility(articleCreds) {
+      const wa = document.getElementById('weatherConfidence')?.dataset?.accuracy;
+      const avg = articleCreds?.length ? articleCreds.reduce((a,b)=>a+b,0)/articleCreds.length : 50;
+      let overall = avg;
+      if (wa) overall = (avg*0.7 + parseInt(wa)*0.3);
+      document.getElementById('editionCredibility').innerHTML = `
+        <span class="label">Today's Edition Reliability:</span>
+        <div class="credibility-bar"><div class="credibility-fill" style="width:${overall.toFixed(0)}%;"></div></div>
+        <span class="credibility-value">${overall.toFixed(0)}%</span>`;
+    }
+
+    async function openPDF(url, title) {
+      const modal = document.getElementById('pdfModal');
+      document.getElementById('modalTitle').textContent = title;
+      const body = document.getElementById('modalBody'); body.innerHTML = 'Loading PDF…'; modal.classList.add('active');
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        let p = 1;
+        body.innerHTML = `<div style="margin-bottom:0.8rem;"><button id="prevPage" class="btn">◀ Prev</button><span style="margin:0 1rem;">Page <span id="currentPage">1</span> / ${pdf.numPages}</span><button id="nextPage" class="btn">Next ▶</button><a href="${url}" download style="margin-left:auto;color:#8ab4f8;">⬇ Download</a></div><canvas id="pdfCanvas"></canvas>`;
+        const canvas = document.getElementById('pdfCanvas'), ctx = canvas.getContext('2d');
+        async function render(num) {
+          const page = await pdf.getPage(num);
+          const vp = page.getViewport({ scale: 1.5 });
+          canvas.width = vp.width; canvas.height = vp.height;
+          await page.render({ canvasContext: ctx, viewport: vp }).promise;
+          document.getElementById('currentPage').textContent = num;
+        }
+        render(1);
+        document.getElementById('prevPage').onclick = () => { if (p>1) render(--p); };
+        document.getElementById('nextPage').onclick = () => { if (p < pdf.numPages) render(++p); };
+      } catch(e) {
+        body.innerHTML = `<p>PDF load failed. <a href="${url}" target="_blank" style="color:#8ab4f8;">Open directly</a></p>`;
+      }
+    }
   </script>
 </body>
 </html>
